@@ -1,0 +1,45 @@
+# Activity: EDA with Skewness & Kurtosis
+# --------------------------------------
+import numpy as np
+import matplotlib.pyplot as plt
+import seaborn as sns
+from scipy.stats import skew, kurtosis, zscore
+
+# Step 1: Generate Synthetic Data
+np.random.seed(42)  # reproducibility
+normal_data = np.random.normal(loc=50, scale=5, size=1000)
+skewed_data = np.random.exponential(scale=10, size=1000)
+
+# Step 2: Visualize Distributions
+plt.figure(figsize=(12,5))
+
+# Normal distribution
+plt.subplot(1,2,1)
+sns.histplot(normal_data, kde=True, color='blue')
+plt.title("Normal Distribution")
+
+# Skewed distribution
+plt.subplot(1,2,2)
+sns.histplot(skewed_data, kde=True, color='red')
+plt.title("Exponential (Skewed) Distribution")
+
+plt.show()
+
+# Step 3: Calculate Shape (Skewness & Kurtosis)
+print("Skewness (Normal):", skew(normal_data))
+print("Skewness (Skewed):", skew(skewed_data))
+
+print("Kurtosis (Normal, Fisher):", kurtosis(normal_data))  # Fisher's definition (Normal ~ 0)
+print("Kurtosis (Skewed, Fisher):", kurtosis(skewed_data))
+
+print("Kurtosis (Normal, Pearson):", kurtosis(normal_data, fisher=False))  # Pearson’s definition (Normal ~ 3)
+print("Kurtosis (Skewed, Pearson):", kurtosis(skewed_data, fisher=False))
+
+# Step 4: Outlier Detection using Z-score
+def detect_outliers(data, threshold=3):
+    z_scores = zscore(data)
+    outliers = np.where(np.abs(z_scores) > threshold)[0]
+    return outliers
+
+outliers = detect_outliers(skewed_data)
+print("Number of outliers in skewed_data:", len(outliers))
